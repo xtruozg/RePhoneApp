@@ -5,7 +5,10 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
-  },/* config options here */
+  },
+  images: {
+    domains: ["shopdunk.com"],
+  },
 };
 
 export default nextConfig;
