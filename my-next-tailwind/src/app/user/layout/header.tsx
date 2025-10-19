@@ -106,7 +106,7 @@ export default function Header() {
             </div>
             {openCart && (
                 <div className="absolute top-20 right-0 w-135 bg-white shadow-lg rounded-lg p-4">
-                    <CartPage />
+                    <CartPage setOpenCart={setOpenCart} />
                 </div>
             )}
         </div>
