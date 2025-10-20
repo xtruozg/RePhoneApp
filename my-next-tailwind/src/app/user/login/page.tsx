@@ -3,22 +3,30 @@
 import InputField from "@/app/components/InputField";
 import { useState } from "react";
 import login from "../../../../public/images/login.jpeg"
+import { loginUser } from "@/app/services/api";
+import { useRouter } from "next/navigation";
 const LoginPage = () => {
     const [formData, setFormData] = useState({
         username: "",
         password: "",
     });
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
-
-    const handleSubmit = (e: React.FormEvent) => {
+    const router = useRouter();
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Form submitted:", formData);
+        try {
+            const res = await loginUser(formData);
+            sessionStorage.setItem("accessToken", res.data.token);
+            sessionStorage.setItem("refreshToken", res.data.token);
+            router.push("/");
+        } catch (err) {
+            console.error("Đăng nhập thất bại:", err);
+            alert("Tên đăng nhập hoặc mật khẩu không đúng!");
+        }
     };
-
     return (
         <div className="flex justify-center min-h-[80vh] items-center w-[70%] mx-auto gap-6">
             <div className="flex-1 flex justify-center">

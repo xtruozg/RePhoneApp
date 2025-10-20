@@ -1,3 +1,5 @@
+import { getAccessToken, logout, saveToken } from "../utils/auth";
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 export const getProductNames = async () => {
     try {
@@ -51,4 +53,51 @@ export const getProductDetail = async (id: number) => {
         console.error("Lỗi khi gọi API /san-pham/:id:", error);
         throw error;
     }
+};
+export const registerUser = async (userData: {
+    username: string;
+    fullName: string;
+    email: string;
+    so_dien_thoai: string;
+    password: string;
+}) => {
+    try {
+        const res = await fetch(`${BASE_URL}/auth/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData),
+            cache: "no-store",
+        });
+        if (!res.ok) throw new Error(`Lỗi HTTP: ${res.status}`);
+        return await res.json();
+    } catch (error) {
+        console.error("Lỗi khi gọi API /auth/register:", error);
+        throw error;
+    }
+};
+
+export const loginUser = async (credentials: { username: string; password: string }) => {
+    const res = await fetch(`${BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credentials),
+    });
+
+    if (!res.ok) throw new Error("Sai tên đăng nhập hoặc mật khẩu");
+
+    const data = await res.json();
+    saveToken(data.accessToken, data.expiresIn);
+    return data;
+};
+export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
+    const token = getAccessToken();
+    const res = await fetch(`${BASE_URL}${url}`, {
+        ...options,
+        headers: {
+            ...options.headers,
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    if (res.status === 401) logout();
+    return res;
 };
