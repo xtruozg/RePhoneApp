@@ -7,11 +7,16 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
   },
   images: {
-    domains: ["shopdunk.com"],
+    domains: ["shopdunk.com", "images.unsplash.com"],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'shopdunk.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
         pathname: '/**',
       },
       {
