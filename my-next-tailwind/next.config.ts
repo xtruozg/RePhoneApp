@@ -8,6 +8,19 @@ const nextConfig: NextConfig = {
   },
   images: {
     domains: ["shopdunk.com"],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'shopdunk.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        pathname: '/**',
+      },
+    ],
+    unoptimized: false,
   },
 };
 

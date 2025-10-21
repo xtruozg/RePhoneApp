@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Banner from "../components/Banner";
 import ProductItem from "../components/ProductItem";
-import { getProduct, getProductNames } from "../services/api";
+import { getProduct, getProductNames, getProductDetail } from "../services/api";
 import DetailProductPage from "./detailProduct/[id]/page";
 import { useSearch } from "../contexts/SearchContext";
 
@@ -13,6 +13,7 @@ export default function HomePage() {
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [selectedName, setSelectedName] = useState<string>("");
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+  const [loadingDetail, setLoadingDetail] = useState(false);
 
   const handleCategoryClick = (categoryName: string) => {
     setSelectedName(categoryName);
@@ -47,7 +48,6 @@ export default function HomePage() {
     fetchProducts();
   }, [selectedName]);
 
-  // Filter products based on search term
   useEffect(() => {
     if (!searchTerm || searchTerm.trim() === "") {
       setFilteredProducts(products);
@@ -61,17 +61,57 @@ export default function HomePage() {
         product.tenSanPham?.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredProducts(filtered);
-      console.log("Filtered products:", filtered);
     }
   }, [searchTerm, products]);
 
-  const handleSelectProduct = (item: any) => {
-    setSelectedProduct(item);
+  const handleSelectProduct = async (item: any) => {
+    try {
+      setLoadingDetail(true);
+     
+      const res = await getProductDetail(item.id);
+
+      if (res && res.data) {
+        setSelectedProduct(res.data);
+      } else {
+        alert("Không thể lấy thông tin chi tiết sản phẩm");
+      }
+    } catch (err) {
+      alert("Không thể tải thông tin sản phẩm. Vui lòng thử lại!");
+    } finally {
+      setLoadingDetail(false);
+    }
   };
   return (
     <div className="w-[70%] m-auto flex flex-col gap-8">
-      {selectedProduct ? (
-        <DetailProductPage product={selectedProduct} detailProduct={selectedProduct.chiTietSanPhams?.[0]} />
+      {loadingDetail ? (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Đang tải thông tin sản phẩm...</p>
+          </div>
+        </div>
+      ) : selectedProduct ? (
+        <div>
+          <button
+            onClick={() => setSelectedProduct(null)}
+            className="mb-4 flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Quay lại danh sách
+          </button>
+          {(() => {
+            console.log("=== RENDERING DETAIL PAGE ===");
+            console.log("selectedProduct:", selectedProduct);
+            console.log("selectedProduct.chiTietSanPhams:", selectedProduct.chiTietSanPhams);
+            console.log("selectedProduct.chiTietSanPhams?.[0]:", selectedProduct.chiTietSanPhams?.[0]);
+            console.log("anhUrls:", selectedProduct.chiTietSanPhams?.[0]?.anhUrls);
+            console.log("============================");
+            return null;
+          })()}
+          <DetailProductPage product={selectedProduct} detailProduct={selectedProduct.chiTietSanPhams?.[0]} />
+        </div>
       ) : (
         <>
           <Banner />

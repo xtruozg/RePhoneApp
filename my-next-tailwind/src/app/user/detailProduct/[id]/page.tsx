@@ -1,19 +1,40 @@
 "use client";
-import Image from "next/image";
+import { useState } from "react";
 
 type DetailProductPageProps = {
   product: any;
   detailProduct: any;
 };
+const SpecItem = ({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | null | undefined;
+}) => {
+  if (!value) return null;
 
-const DetailProductPage = ({ product, detailProduct }: DetailProductPageProps) => {
+  return (
+    <div className="flex justify-between border-b border-gray-200 py-3">
+      <p className="text-gray-600 font-medium">{label}</p>
+      <p className="text-gray-900 text-right flex-1 ml-4">{value}</p>
+    </div>
+  );
+};
+const DetailProductPage = ({
+  product,
+  detailProduct,
+}: DetailProductPageProps) => {
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const imageUrls = detailProduct?.anhUrls || [];
+  const currentImage = imageUrls[selectedImageIndex] || imageUrls[0] || "";
   const COLOR_MAP: Record<string, string> = {
-    "Đen": "#000000",
-    "Xanh": "#007AFF",
-    "Trắng": "#FFFFFF",
-    "Tím": "#B57EDC",
-    "Đỏ": "#FF3B30",
-    "Hồng": "#FFB6C1",
+    Đen: "#000000",
+    Xanh: "#007AFF",
+    Trắng: "#FFFFFF",
+    Tím: "#B57EDC",
+    Đỏ: "#FF3B30",
+    Hồng: "#FFB6C1",
   };
 
   return (
@@ -21,32 +42,86 @@ const DetailProductPage = ({ product, detailProduct }: DetailProductPageProps) =
       <div className="flex gap-12">
         <div className="flex-1 flex flex-col items-center">
           <div className="border rounded-2xl p-4 bg-gray-50 w-full flex justify-center">
-            <div className="w-[350px] h-[350px] bg-gray-200 flex items-center justify-center rounded-xl">
-              Ảnh sản phẩm
+            <div className="w-[350px] h-[350px] flex items-center justify-center rounded-xl overflow-hidden bg-white relative">
+              {currentImage ? (
+                <img
+                  src={currentImage}
+                  alt={product?.tenSanPham || "Sản phẩm"}
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 flex-col gap-2">
+                  <svg
+                    className="w-16 h-16 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <p className="text-sm font-medium">Không có ảnh</p>
+                  <p className="text-xs mt-2 max-w-[300px] break-words">
+                    Debug: imageUrls = {JSON.stringify(imageUrls)}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
-          <div className="flex gap-3 mt-4">
-            <div className="w-16 h-16 bg-gray-200 rounded-xl flex items-center justify-center text-xs">
-              thumb 1
+          {imageUrls.length > 1 && (
+            <div className="flex gap-3 mt-4 flex-wrap justify-center">
+              {imageUrls.slice(0, 4).map((url: string, index: number) => (
+                <div
+                  key={index}
+                  onClick={() => {
+                    console.log("Selecting image index:", index, "URL:", url);
+                    setSelectedImageIndex(index);
+                  }}
+                  className={`w-16 h-16 bg-gray-200 rounded-xl flex items-center justify-center overflow-hidden cursor-pointer transition ${
+                    selectedImageIndex === index
+                      ? "ring-2 ring-blue-500"
+                      : "hover:ring-2 hover:ring-blue-300"
+                  }`}
+                >
+                  <img
+                    src={url}
+                    alt={`Ảnh ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
             </div>
-            <div className="w-16 h-16 bg-gray-200 rounded-xl flex items-center justify-center text-xs">
-              thumb 2
-            </div>
-            <div className="w-16 h-16 bg-gray-200 rounded-xl flex items-center justify-center text-xs">
-              thumb 3
-            </div>
-          </div>
+          )}
         </div>
         <div className="flex-1 flex flex-col gap-5">
           <div>
             <h1 className="text-2xl font-semibold">{product?.tenSanPham}</h1>
+            {product?.ma && (
+              <p className="text-gray-500 text-sm mt-1">Mã SP: {product.ma}</p>
+            )}
           </div>
 
-          <div className="flex flex-col gap-3">
-            <span className="text-3xl font-bold text-blue-600">
-              {detailProduct?.giaBan?.toLocaleString()}₫
-            </span>
-            <span className="text-gray-400 line-through text-2xl">{detailProduct?.giaBan ? (detailProduct.giaBan * 1.1).toLocaleString() : undefined}₫</span>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-baseline gap-3">
+              <span className="text-3xl font-bold text-blue-600">
+                {detailProduct?.giaBan?.toLocaleString("vi-VN")}₫
+              </span>
+              {detailProduct?.giaBan && (
+                <span className="text-gray-400 line-through text-lg">
+                  {(detailProduct.giaBan * 1.1).toLocaleString("vi-VN")}₫
+                </span>
+              )}
+            </div>
+            {detailProduct?.giaBan && (
+              <div className="inline-flex items-center bg-red-50 text-red-600 px-3 py-1 rounded-lg text-sm font-medium w-fit">
+                Tiết kiệm {(detailProduct.giaBan * 0.1).toLocaleString("vi-VN")}
+                ₫ (10%)
+              </div>
+            )}
           </div>
 
           <div>
@@ -78,7 +153,8 @@ const DetailProductPage = ({ product, detailProduct }: DetailProductPageProps) =
                     className="w-8 h-8 rounded-full border border-gray-300 cursor-pointer hover:scale-110 transition"
                     style={{
                       backgroundColor: COLOR_MAP[colorName] || "#ccc",
-                      borderColor: colorName === "Trắng" ? "#ddd" : "transparent",
+                      borderColor:
+                        colorName === "Trắng" ? "#ddd" : "transparent",
                     }}
                   ></div>
                 ))}
@@ -106,8 +182,12 @@ const DetailProductPage = ({ product, detailProduct }: DetailProductPageProps) =
           </div>
           <div className="border rounded-2xl p-4 bg-gray-50">
             <ul className="list-disc ml-5 text-sm space-y-1">
-              <li>Bộ sản phẩm gồm: Hộp, Sách hướng dẫn, Cây lấy sim, Cáp Type C</li>
-              <li>Miễn phí 1 đổi 1 trong 30 ngày đầu tiên (nếu có lỗi do NSX)</li>
+              <li>
+                Bộ sản phẩm gồm: Hộp, Sách hướng dẫn, Cây lấy sim, Cáp Type C
+              </li>
+              <li>
+                Miễn phí 1 đổi 1 trong 30 ngày đầu tiên (nếu có lỗi do NSX)
+              </li>
               <li>Bảo hành chính hãng 1 năm </li>
               <li>Giao hàng nhanh toàn quốc</li>
               <li>Tax Refund For Foreigners</li>
@@ -115,54 +195,84 @@ const DetailProductPage = ({ product, detailProduct }: DetailProductPageProps) =
           </div>
         </div>
       </div>
-      <div className="flex flex-col">
-        <h2 className="text-2xl font-semibold mb-4 text-center">Thông số kĩ thuật</h2>
-        <div className="flex flex-col gap-4 justify-between">
-          <div className="flex justify-between">
-            <p>Công nghệ màn hình:</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Độ phân giải màn hình:</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Camera:</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Hệ điều hành & CPU:</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Tiện ích đặc biệt:</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Bộ nhớ trong:</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Sim & nghe gọi:</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Kích thước, khối lượng:</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Chất liệu khung viền:</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Kết nối:</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Tiện ích khác:</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Kích thước và Trọng lượng :</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Chống nước - Chống bụi:</p>
-          </div>
-          <div className="flex justify-between">
-            <p>Pin:</p>
-          </div>
+      <div className="flex flex-col bg-white rounded-2xl border border-gray-200 p-6">
+        <h2 className="text-2xl font-semibold mb-6 text-center">
+          Thông số kĩ thuật
+        </h2>
+        <div className="flex flex-col">
+          {(product?.tenManHinh || product?.chuanManHinh) && (
+            <SpecItem
+              label="Công nghệ màn hình"
+              value={`${product?.tenManHinh || ""} ${
+                product?.chuanManHinh || ""
+              }`.trim()}
+            />
+          )}
+          <SpecItem label="Độ phân giải" value={product?.doPhanGiai} />
+          <SpecItem label="Kích thước màn hình" value={product?.kichThuoc} />
+          <SpecItem
+            label="Độ sáng tối đa"
+            value={product?.doSangToiDa ? `${product.doSangToiDa} nits` : null}
+          />
+          <SpecItem label="Tần số quét" value={product?.tanSoQuet} />
+          <SpecItem label="Kiểu màn hình" value={product?.kieuManHinh} />
+
+          <SpecItem label="Camera sau" value={product?.cumSauCamera} />
+          <SpecItem label="Camera trước" value={product?.cumTruocCamera} />
+
+          <SpecItem
+            label="Chipset"
+            value={
+              product?.tenCpu
+                ? `${product.tenCpu}${
+                    product?.soNhan ? ` (${product.soNhan} nhân)` : ""
+                  }`
+                : null
+            }
+          />
+          <SpecItem label="GPU" value={product?.tenGpu} />
+
+          <SpecItem label="RAM" value={detailProduct?.dungLuongRam} />
+          <SpecItem
+            label="Bộ nhớ trong"
+            value={detailProduct?.dungLuongBoNhoTrong}
+          />
+          <SpecItem label="Bộ nhớ ngoài" value={product?.tenBoNhoNgoai} />
+
+          {(product?.dungLuongPin || product?.tenPin) && (
+            <SpecItem
+              label="Pin"
+              value={`${product?.dungLuongPin || ""} ${
+                product?.tenPin || ""
+              }`.trim()}
+            />
+          )}
+          <SpecItem label="Công suất sạc" value={product?.congSac} />
+
+          <SpecItem
+            label="SIM"
+            value={
+              product?.soLuongSimHoTro
+                ? `${product.soLuongSimHoTro} SIM ${
+                    product?.cacLoaiSimHoTro || ""
+                  }`
+                : product?.cacLoaiSimHoTro
+            }
+          />
+          <SpecItem label="Mạng di động" value={product?.tenMang} />
+
+          <SpecItem label="Chất liệu khung" value={product?.chatLieuKhung} />
+          <SpecItem
+            label="Chất liệu mặt lưng"
+            value={product?.chatLieuMatLung}
+          />
+
+          <SpecItem label="Cổng sạc" value={product?.congSac} />
+          <SpecItem label="Công nghệ hỗ trợ" value={product?.congNgheHoTro} />
+          <SpecItem label="Nhà sản xuất" value={product?.tenNhaSanXuat} />
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 
