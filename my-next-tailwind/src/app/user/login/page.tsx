@@ -5,6 +5,7 @@ import { useState } from "react";
 import login from "../../../../public/images/login.jpeg"
 import { loginUser } from "@/app/services/api";
 import { useRouter } from "next/navigation";
+import { saveUserInfo } from "@/app/utils/auth";
 const LoginPage = () => {
     const [formData, setFormData] = useState({
         username: "",
@@ -19,8 +20,28 @@ const LoginPage = () => {
         e.preventDefault();
         try {
             const res = await loginUser(formData);
-            sessionStorage.setItem("accessToken", res.data.token);
-            sessionStorage.setItem("refreshToken", res.data.token);
+            if (res.data?.user || res.user || res.data) {
+                const user = res.data?.user || res.user || res.data;
+                console.log("User info:", user);
+
+                const userInfo = {
+                    fullName: user.fullName || user.full_name || user.ho_ten || user.hoTen || user.username || "User",
+                    username: user.username || user.email || formData.username,
+                    email: user.email || user.Email || ""
+                };
+
+                saveUserInfo(userInfo);
+                window.dispatchEvent(new Event('userLoggedIn'));
+            } else {
+                console.log("No user info in response, using username");
+                saveUserInfo({
+                    fullName: formData.username,
+                    username: formData.username,
+                    email: ""
+                });
+                window.dispatchEvent(new Event('userLoggedIn'));
+            }
+
             router.push("/");
         } catch (err) {
             console.error("Đăng nhập thất bại:", err);

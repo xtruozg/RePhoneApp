@@ -1,4 +1,4 @@
-import { getAccessToken, logout, saveToken } from "../utils/auth";
+import { getAccessToken, logout, saveToken, saveUserInfo } from "../utils/auth";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 export const getProductNames = async () => {
@@ -86,7 +86,10 @@ export const loginUser = async (credentials: { username: string; password: strin
     if (!res.ok) throw new Error("Sai tên đăng nhập hoặc mật khẩu");
 
     const data = await res.json();
-    saveToken(data.accessToken, data.expiresIn);
+    console.log("API loginUser - Full response:", data);
+
+    saveToken(data.accessToken || data.token, data.expiresIn || data.refreshToken || data.token);
+
     return data;
 };
 export const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
