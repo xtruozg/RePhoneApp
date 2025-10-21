@@ -11,7 +11,7 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
         <div className="w-full h-[150px] fixed top-0 left-0 z-50">
           <Header />
         </div>
-        <main className="min-h-screen pt-[200px] bg-white">
+        <main className="min-h-screen pt-[150px] bg-white">
           {children}
         </main>
         <div className="w-full">

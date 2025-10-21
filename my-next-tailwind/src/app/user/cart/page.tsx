@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 type CartPageProps = {
     setOpenCart: (open: boolean) => void;

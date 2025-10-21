@@ -52,7 +52,6 @@ export default function HomePage() {
     if (!searchTerm || searchTerm.trim() === "") {
       setFilteredProducts(products);
     } else {
-      // Reset category filter when searching
       if (selectedName !== "") {
         setSelectedName("");
       }
@@ -101,15 +100,6 @@ export default function HomePage() {
             </svg>
             Quay lại danh sách
           </button>
-          {(() => {
-            console.log("=== RENDERING DETAIL PAGE ===");
-            console.log("selectedProduct:", selectedProduct);
-            console.log("selectedProduct.chiTietSanPhams:", selectedProduct.chiTietSanPhams);
-            console.log("selectedProduct.chiTietSanPhams?.[0]:", selectedProduct.chiTietSanPhams?.[0]);
-            console.log("anhUrls:", selectedProduct.chiTietSanPhams?.[0]?.anhUrls);
-            console.log("============================");
-            return null;
-          })()}
           <DetailProductPage product={selectedProduct} detailProduct={selectedProduct.chiTietSanPhams?.[0]} />
         </div>
       ) : (
@@ -154,7 +144,7 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="flex gap-6 flex-wrap">
             {filteredProducts.length > 0 ? (
               filteredProducts.map((item) => {
                 const detail = item.chiTietSanPhams?.[0];

@@ -141,30 +141,10 @@ export default function Header() {
                     <Link href="/user/services" className="hover:text-yellow-300 transition">
                         Dịch vụ
                     </Link>
-                    <Tooltip
-                        trigger={
-                            <div className="cursor-pointer text-white font-semibold hover:text-yellow-300 transition">
-                                Ưu đãi
-                            </div>
-                        }
-                        position="bottom"
-                    >
-                        <div className="text-sm text-gray-800">
-                            <span className="font-semibold text-blue-600 text-center">Miễn phí vận chuyển toàn quốc</span>
-                        </div>
-                    </Tooltip>
-                    <Tooltip
-                        trigger={
-                            <div className="cursor-pointer text-white font-semibold hover:text-yellow-300 transition">
-                                Giờ làm việc
-                            </div>
-                        }
-                        position="bottom"
-                    >
-                        <div className="text-sm text-gray-800  w-full text-center">
-                            <span className="font-semibold text-blue-600">Mở cửa: 8:00 - 22:00</span>
-                        </div>
-                    </Tooltip>
+                  <Link href="/user/endow" className="hover:text-yellow-300 transition">
+                        Ưu đãi
+                    </Link>
+                    
                     <Tooltip
                         trigger={
                             <div className="cursor-pointer text-white font-semibold hover:text-yellow-300 transition">

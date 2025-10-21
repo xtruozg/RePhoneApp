@@ -22,7 +22,7 @@ export default function ProductItem({
     image,
 }: ProductItemProps) {
     return (
-        <div className="relative bg-white shadow-sm rounded-xl p-3 border hover:shadow-md transition-all duration-300">
+        <div className="w-[250px] h-[370px] relative bg-white shadow-sm rounded-xl p-2 pt-8 border hover:shadow-md transition-all duration-300">
             {discount > 0 && (
                 <div className="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
                     Giảm {discount}%
@@ -37,8 +37,8 @@ export default function ProductItem({
                 <Image
                     src={image || "/default-image.png"}
                     alt={name}
-                    width={350}
-                    height={350}
+                    width={250}
+                    height={250}
                     className="object-contain"
                 />
             </div>
