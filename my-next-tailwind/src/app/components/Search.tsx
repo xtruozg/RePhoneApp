@@ -1,13 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function SearchBar({
     placeholder = "Bạn tìm gì...",
     onSearch = (value: string) => { },
     className = "",
+    externalValue = "",
 }) {
     const [value, setValue] = useState("");
+
+    useEffect(() => {
+        if (externalValue === "") {
+            setValue("");
+        }
+    }, [externalValue]);
 
     const handleSearch = () => {
         if (value.trim() !== "") onSearch(value);

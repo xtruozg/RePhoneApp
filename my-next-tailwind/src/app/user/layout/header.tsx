@@ -6,8 +6,10 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import CartPage from "../cart/page";
 import { getUserInfo, isLoggedIn, logout } from "@/app/utils/auth";
+import { useSearch } from "@/app/contexts/SearchContext";
 
 export default function Header() {
+    const { searchTerm, setSearchTerm } = useSearch();
     const [openCart, setOpenCart] = useState(false);
     const [userInfo, setUserInfo] = useState<{ fullName: string; username: string; email?: string } | null>(null);
     const [mounted, setMounted] = useState(false);
@@ -52,13 +54,18 @@ export default function Header() {
         }
         return words[words.length - 1].charAt(0).toUpperCase();
     };
+
+    const handleSearch = (value: string) => {
+        setSearchTerm(value);
+    };
+
     return (
         <div className="w-full bg-[#515154] h-full flex items-center justify-center">
             <div className="w-[70%] m-auto flex flex-col gap-4 justify-center items-center">
                 <div className="w-full m-auto flex items-center justify-between gap-6 py-2">
                     <img src={Logo.src} alt="Logo" width={250} height={250} />
                     <div className="w-[750px]">
-                        <Search placeholder="Bạn tìm gì ..." className="w-full" />
+                        <Search placeholder="Bạn tìm gì ..." className="w-full" onSearch={handleSearch} externalValue={searchTerm} />
                     </div>
                     <div onClick={handleOpenCart} className="flex justify-between items-center gap-2 text-white cursor-pointer">
                         <svg className="text-themeColor-500 w-8 h-8"
