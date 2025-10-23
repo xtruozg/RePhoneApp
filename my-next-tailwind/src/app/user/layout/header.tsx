@@ -1,6 +1,6 @@
 "use client";
 import Search from "@/app/components/Search";
-import Logo from "../../../../public/images/logo.png";
+import Logo from "../../../../public/images/logo2.png";
 import Tooltip from "@/app/components/Tooltip";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -63,7 +63,7 @@ export default function Header() {
         <div className="w-full bg-[#515154] h-full flex items-center justify-center">
             <div className="w-[70%] m-auto flex flex-col gap-4 justify-center items-center">
                 <div className="w-full m-auto flex items-center justify-between gap-6 py-2">
-                    <img src={Logo.src} alt="Logo" width={250} height={250} />
+                    <img src={Logo.src} alt="Logo" width={150} className="w-[100px] h-[100px]"/>
                     <div className="w-[750px]">
                         <Search placeholder="Bạn tìm gì ..." className="w-full" onSearch={handleSearch} externalValue={searchTerm} />
                     </div>

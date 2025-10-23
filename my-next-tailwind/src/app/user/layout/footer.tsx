@@ -1,4 +1,4 @@
-import logo from "../../../../public/images/logo.png";
+import logo from "../../../../public/images/logo2.png";
 export default function Footer() {
     return (
         <div className="w-full bg-[#1D1D1F] py-8 text-white">

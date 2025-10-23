@@ -448,7 +448,7 @@ export default function EndowPage() {
 
       <section className="container mx-auto px-4 py-12 md:py-20">
         <h2 className="text-2xl md:text-3xl font-bold text-center text-[#1d1d1f] mb-8 md:mb-12">
-          ƯU ĐÃI KHI MUA TRẢ GÓP TẠI SHOPDUNK
+          ƯU ĐÃI KHI MUA TRẢ GÓP TẠI ISHOP
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
