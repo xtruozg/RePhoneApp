@@ -9,26 +9,9 @@ const serviceRepairItems = [
     icon: "\u{1F4F1}",
     link: "#",
   },
+
   {
     id: 2,
-    title: "Sửa chữa iPad",
-    icon: "\u{1F4F2}",
-    link: "#",
-  },
-  {
-    id: 3,
-    title: "Sửa chữa Mac",
-    icon: "\u{1F4BB}",
-    link: "#",
-  },
-  {
-    id: 4,
-    title: "Sửa chữa Apple Watch",
-    icon: "\u{231A}",
-    link: "#",
-  },
-  {
-    id: 5,
     title: "Sửa chữa AirPods",
     icon: "\u{1F3A7}",
     link: "#",
@@ -80,7 +63,7 @@ const benefits = [
     icon: "\u{1F4CB}",
     title: "Chính hãng",
     description:
-      "Trung tâm bảo hành ủy quyền chính hãng, có kiểm tra và xác thực lịch trình sửa chữa rõ ràng. Vui lòng đặt lịch hẹn để ShopDunk Care hỗ trợ bạn nhanh nhất.",
+      "Trung tâm bảo hành ủy quyền chính hãng, có kiểm tra và xác thực lịch trình sửa chữa rõ ràng. Vui lòng đặt lịch hẹn để IShop Care hỗ trợ bạn nhanh nhất.",
   },
   {
     id: 2,
@@ -94,7 +77,7 @@ const benefits = [
     icon: "\u{2713}",
     title: "Cam kết bảo mật",
     description:
-      "Dữ liệu người dùng được quản lý nghiêm ngặt nội bộ. ShopDunk Care cam kết bảo mật tuyệt đối thông tin của bạn.",
+      "Dữ liệu người dùng được quản lý nghiêm ngặt nội bộ. IShop Care cam kết bảo mật tuyệt đối thông tin của bạn.",
   },
   {
     id: 4,
@@ -296,7 +279,7 @@ export default function ServicesPage() {
               color: "#1d1d1f",
             }}
           >
-            Tại sao nên chọn ShopDunk Care?
+            Tại sao nên chọn IShop Care?
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

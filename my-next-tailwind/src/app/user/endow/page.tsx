@@ -202,45 +202,22 @@ export default function EndowPage() {
   const products = [
     {
       id: 1,
-      name: "iPad Pro 11 inch",
-      monthlyPayment: "1.754.000đ/tháng",
+      name: "iPhone 17",
+      monthlyPayment: "3.754.000đ/tháng",
       icon: "📱",
     },
     {
       id: 2,
-      name: "iPad Pro 12.9 inch",
-      monthlyPayment: "2.323.000đ/tháng",
+      name: "iPhone 17 Pro Max",
+      monthlyPayment: "6.323.000đ/tháng",
       icon: "📱",
     },
-    {
-      id: 3,
-      name: "MacBook Pro 14 inch",
-      monthlyPayment: "4.412.000đ/tháng",
-      icon: "💻",
-    },
-    {
-      id: 4,
-      name: "MacBook Pro 16 inch",
-      monthlyPayment: "5.543.000đ/tháng",
-      icon: "💻",
-    },
-    {
-      id: 5,
-      name: "AirPods 2",
-      monthlyPayment: "279.000đ/tháng",
-      icon: "🎧",
-    },
-    {
-      id: 6,
-      name: "AirPods Pro",
-      monthlyPayment: "415.000đ/tháng",
-      icon: "🎧",
-    },
+
   ];
 
   const terms = [
-    "Khách hàng điền đầy đủ thông tin khi đặt hàng tại ShopDunk",
-    "Chỉ áp dụng khách hàng trực tiếp sở hữu thẻ tín dụng khi mua sản phẩm tại ShopDunk hoặc ShopDunk",
+    "Khách hàng điền đầy đủ thông tin khi đặt hàng tại IShop",
+    "Chỉ áp dụng khách hàng trực tiếp sở hữu thẻ tín dụng khi mua sản phẩm tại IShop hoặc ShopDunk",
     "Mọi thông tin liên quan đến việc thanh toán, khách hàng vui lòng liên hệ hotline ngân hàng để được hỗ trợ",
     "Chỉ áp dụng thẻ tín dụng cá nhân",
     "Sản phẩm trả góp không áp dụng các chương trình khuyến mãi khác",

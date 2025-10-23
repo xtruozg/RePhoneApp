@@ -6,7 +6,7 @@ export default function Footer() {
                 <div className="flex flex-col text-center gap-4">
                     <img src={logo.src} alt="Logo" width={150} height={150} className="mb-4" />
                     <p className="text-sm text-gray-300 leading-7 text-justify max-w-[320px]">
-                        Năm 2020, <span className="text-white font-semibold">ShopDunk</span> trở thành đại lý ủy quyền của
+                        Năm 2020, <span className="text-white font-semibold">ISHOP</span> trở thành đại lý ủy quyền của
                         <span className="text-white font-semibold"> Apple</span>. Chúng tôi phát triển chuỗi cửa hàng tiêu chuẩn
                         và Apple Mono Store nhằm mang đến trải nghiệm tốt nhất về sản phẩm và dịch vụ của Apple cho người dùng Việt Nam.
                     </p>
@@ -114,7 +114,7 @@ export default function Footer() {
                 </div>
             </div>
             <div className="w-[70%] m-auto text-sm text-gray-400 mt-8 flex flex-col gap-2 border-t border-gray-600 pt-4">
-                <p>© 2016 Công ty Cổ Phần HESMAN Việt Nam GPDKKD: 0107465657 do Sở KH & ĐT TP. Hà Nội cấp ngày 08/06/2016.</p>
+                <p>© 2016 Công ty Cổ Phần Unicoin Việt Nam GPDKKD: 0107465657 do Sở KH & ĐT TP. Hà Nội cấp ngày 08/06/2016.</p>
                 <p>Địa chỉ: Số 1, Đường 1, Khu Đô Thị Mới, TP. Hà Nội</p>
                 <p>Hotline: 1900.6626</p>
             </div>
