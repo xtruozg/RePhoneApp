@@ -3,8 +3,8 @@ export default function HeaderAdmin() {
     <>
       <div className="w-full flex justify-between items-center">
         <div className="flex flex-col">
-          <p className="font-bold text-black text-[18px]">Quản lý cửa hàng iSHOP</p>
-          <p className="text-gray-400 text-[14px] mt-1">Hệ thống quản lý bán hàng</p>
+          <p className="font-bold text-black text-[22px]">Quản lý cửa hàng iSHOP</p>
+          <p className="text-gray-400 text-[16px] mt-1">Hệ thống quản lý bán hàng</p>
         </div>
         <div className="flex items-center justify-center gap-4">
           <div>

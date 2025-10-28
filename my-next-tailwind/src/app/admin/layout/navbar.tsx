@@ -8,7 +8,7 @@ export default function Navbar() {
   const menuItems = [
     {
       label: 'Thống kê',
-      path: '/dashboard',
+      path: '/admin/dashboard',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +29,7 @@ export default function Navbar() {
     },
     {
       label: 'Bán tại quầy',
-      path: '/pos',
+      path: '/admin/pos',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -47,7 +47,7 @@ export default function Navbar() {
     },
     {
       label: 'Quản lý hóa đơn',
-      path: '/invoice',
+      path: '/admin/invoice',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -69,7 +69,7 @@ export default function Navbar() {
     },
     {
       label: 'Quản lý sản phẩm',
-      path: '/products',
+      path: '/admin/products',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -88,7 +88,7 @@ export default function Navbar() {
     },
     {
       label: 'Quản lý thuộc tính',
-      path: '/attributes',
+      path: '/admin/attributes',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -107,7 +107,7 @@ export default function Navbar() {
     },
     {
       label: 'Quản lý khách hàng',
-      path: '/customers',
+      path: '/admin/customers',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -121,7 +121,7 @@ export default function Navbar() {
     },
     {
       label: 'Quản lý nhân viên',
-      path: '/staffs',
+      path: '/admin/staffs',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"

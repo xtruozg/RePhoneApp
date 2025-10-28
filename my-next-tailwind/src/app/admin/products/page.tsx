@@ -1,0 +1,523 @@
+"use client";
+
+import React, { JSX } from "react";
+
+// TypeScript Interfaces
+interface Product {
+  id: number;
+  name: string;
+  color: string;
+  model: string;
+  storage: string;
+  costPrice: string;
+  sellPrice: string;
+  stock: number;
+  status: "active" | "out_of_stock";
+}
+
+interface StatCard {
+  label: string;
+  value: number | string;
+  bgColor: string;
+  iconBg: string;
+  icon: string;
+}
+
+// Dummy Data
+const productsData: Product[] = [
+  {
+    id: 1,
+    name: "iPhone 15 Pro Max",
+    color: "Titan Tự Nhiên",
+    model: "A2849",
+    storage: "256GB",
+    costPrice: "26,000,000 đ",
+    sellPrice: "29,990,000 đ",
+    stock: 8,
+    status: "active",
+  },
+  {
+    id: 2,
+    name: "iPhone 15 Pro",
+    color: "Titan Xanh",
+    model: "A2848",
+    storage: "128GB",
+    costPrice: "22,500,000 đ",
+    sellPrice: "25,990,000 đ",
+    stock: 12,
+    status: "active",
+  },
+  {
+    id: 3,
+    name: "iPhone 15 Plus",
+    color: "Đen",
+    model: "A2847",
+    storage: "256GB",
+    costPrice: "20,000,000 đ",
+    sellPrice: "22,990,000 đ",
+    stock: 15,
+    status: "active",
+  },
+  {
+    id: 4,
+    name: "iPhone 15",
+    color: "Hồng",
+    model: "A2846",
+    storage: "128GB",
+    costPrice: "17,500,000 đ",
+    sellPrice: "19,990,000 đ",
+    stock: 20,
+    status: "active",
+  },
+  {
+    id: 5,
+    name: "iPhone 14 Pro Max",
+    color: "Tím",
+    model: "A2651",
+    storage: "512GB",
+    costPrice: "24,000,000 đ",
+    sellPrice: "27,990,000 đ",
+    stock: 6,
+    status: "active",
+  },
+  {
+    id: 6,
+    name: "iPhone 14",
+    color: "Xanh",
+    model: "A2649",
+    storage: "256GB",
+    costPrice: "15,500,000 đ",
+    sellPrice: "17,990,000 đ",
+    stock: 10,
+    status: "active",
+  },
+  {
+    id: 7,
+    name: "iPhone 13 Pro",
+    color: "Xanh Sierra",
+    model: "A2483",
+    storage: "128GB",
+    costPrice: "19,000,000 đ",
+    sellPrice: "21,990,000 đ",
+    stock: 0,
+    status: "out_of_stock",
+  },
+];
+
+const statsData: StatCard[] = [
+  {
+    label: "Tổng sản phẩm",
+    value: 7,
+    bgColor: "bg-blue-50",
+    iconBg: "bg-blue-500",
+    icon: "box",
+  },
+  {
+    label: "Đang kinh doanh",
+    value: 6,
+    bgColor: "bg-green-50",
+    iconBg: "bg-green-500",
+    icon: "check",
+  },
+  {
+    label: "Hết hàng",
+    value: 1,
+    bgColor: "bg-red-50",
+    iconBg: "bg-red-500",
+    icon: "x",
+  },
+  {
+    label: "Giá trị kho",
+    value: "1,644,290,000 đ",
+    bgColor: "bg-purple-50",
+    iconBg: "bg-purple-500",
+    icon: "dollar",
+  },
+];
+
+// Icon Components
+const getIcon = (iconName: string): JSX.Element => {
+  const icons: Record<string, JSX.Element> = {
+    box: (
+      <svg
+        className="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+        />
+      </svg>
+    ),
+    check: (
+      <svg
+        className="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+    ),
+    x: (
+      <svg
+        className="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+    ),
+    dollar: (
+      <svg
+        className="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+    ),
+    package: (
+      <svg
+        className="w-8 h-8"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+        />
+      </svg>
+    ),
+    plus: (
+      <svg
+        className="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 4v16m8-8H4"
+        />
+      </svg>
+    ),
+    search: (
+      <svg
+        className="w-5 h-5 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        />
+      </svg>
+    ),
+    filter: (
+      <svg
+        className="w-5 h-5 text-gray-500"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+        />
+      </svg>
+    ),
+    phone: (
+      <svg
+        className="w-10 h-10"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <defs>
+          <linearGradient id="phoneGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#3B82F6" />
+            <stop offset="100%" stopColor="#8B5CF6" />
+          </linearGradient>
+        </defs>
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          stroke="url(#phoneGradient)"
+          d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+        />
+      </svg>
+    ),
+    edit: (
+      <svg
+        className="w-5 h-5 text-gray-400 hover:text-blue-600 cursor-pointer transition"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+        />
+      </svg>
+    ),
+    delete: (
+      <svg
+        className="w-5 h-5 text-gray-400 hover:text-red-600 cursor-pointer transition"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+        />
+      </svg>
+    ),
+  };
+  return icons[iconName] || icons.box;
+};
+
+export default function ProductsPage() {
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+          <div className="bg-purple-100 p-3 rounded-lg text-purple-600">
+            {getIcon("package")}
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">
+              Quản lý sản phẩm
+            </h1>
+            <p className="text-gray-600 mt-1">Quản lý kho iPhone và phụ kiện</p>
+          </div>
+        </div>
+        <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition shadow-sm">
+          {getIcon("plus")}
+          <span className="font-medium">Thêm sản phẩm</span>
+        </button>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        {statsData.map((stat, index) => (
+          <div
+            key={index}
+            className={`${stat.bgColor} rounded-lg shadow-sm p-6`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-2">{stat.label}</p>
+                <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+              </div>
+              <div className={`${stat.iconBg} p-3 rounded-lg text-white`}>
+                {getIcon(stat.icon)}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Search & Filter Bar */}
+      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Search Input */}
+          <div className="flex-1 relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              {getIcon("search")}
+            </div>
+            <input
+              type="text"
+              placeholder="Tìm kiếm sản phẩm..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Category Filter */}
+          <div className="relative">
+            <select className="appearance-none pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer bg-white">
+              <option>Tất cả danh mục</option>
+              <option>iPhone 15 Series</option>
+              <option>iPhone 14 Series</option>
+              <option>iPhone 13 Series</option>
+              <option>Phụ kiện</option>
+            </select>
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              {getIcon("filter")}
+            </div>
+          </div>
+
+          {/* Status Filter */}
+          <div className="relative">
+            <select className="appearance-none pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer bg-white">
+              <option>Tất cả trạng thái</option>
+              <option>Đang bán</option>
+              <option>Hết hàng</option>
+            </select>
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              {getIcon("filter")}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Products Table */}
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b">
+              <tr>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Sản phẩm
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Model
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                  Cấu hình
+                </th>
+                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">
+                  Giá vốn
+                </th>
+                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-700">
+                  Giá bán
+                </th>
+                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">
+                  Tồn kho
+                </th>
+                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">
+                  Trạng thái
+                </th>
+                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">
+                  Thao tác
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {productsData.map((product) => (
+                <tr
+                  key={product.id}
+                  className="border-b hover:bg-gray-50 transition"
+                >
+                  {/* Product Info */}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0">{getIcon("phone")}</div>
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {product.name}
+                        </p>
+                        <p className="text-sm text-gray-500">{product.color}</p>
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Model */}
+                  <td className="px-6 py-4">
+                    <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm font-medium">
+                      {product.model}
+                    </span>
+                  </td>
+
+                  {/* Storage */}
+                  <td className="px-6 py-4">
+                    <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm font-medium">
+                      {product.storage}
+                    </span>
+                  </td>
+
+                  {/* Cost Price */}
+                  <td className="px-6 py-4 text-right text-gray-800 font-medium">
+                    {product.costPrice}
+                  </td>
+
+                  {/* Sell Price */}
+                  <td className="px-6 py-4 text-right text-gray-800 font-medium">
+                    {product.sellPrice}
+                  </td>
+
+                  {/* Stock */}
+                  <td className="px-6 py-4">
+                    <div className="flex justify-center">
+                      <span className="bg-gray-900 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-medium">
+                        {product.stock}
+                      </span>
+                    </div>
+                  </td>
+
+                  {/* Status */}
+                  <td className="px-6 py-4">
+                    <div className="flex justify-center">
+                      {product.status === "active" ? (
+                        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
+                          Đang bán
+                        </span>
+                      ) : (
+                        <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium">
+                          Hết hàng
+                        </span>
+                      )}
+                    </div>
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center justify-center gap-3">
+                      {getIcon("edit")}
+                      {getIcon("delete")}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Pagination */}
+      <div className="bg-white rounded-lg shadow-sm p-4">
+        <p className="text-center text-sm text-gray-600">
+          Hiển thị {productsData.length} / {productsData.length} sản phẩm
+        </p>
+      </div>
+    </div>
+  );
+}
