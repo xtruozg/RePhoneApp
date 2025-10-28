@@ -23,7 +23,6 @@ interface StatCard {
   icon: string;
 }
 
-// Dummy Data
 const productsData: Product[] = [
   {
     id: 1,
