@@ -9,13 +9,19 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen">
-      <div className="">
+    <div className="flex min-h-screen justify-between">
+      <div className="w-[10%] border-r border-gray-300">
         <Navbar />
       </div>
-      <div className="">
-        <HeaderAdmin />
-        <main className="flex-1 p-8 bg-gray-50">{children}</main>
+      <div className="w-[90%] flex flex-col">
+        <div className="shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] h-[100px]">
+          <div className="w-[95%] m-auto flex items-center h-full">
+            <HeaderAdmin />
+          </div>
+        </div>
+        <div className="w-[95%] h-full m-auto pt-10">
+          <main>{children}</main>
+        </div>
       </div>
     </div>
   );

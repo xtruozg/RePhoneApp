@@ -1,3 +1,39 @@
 export default function DashboardPage() {
-  return <h1 className="text-2xl font-bold">Admin Dashboard</h1>;
+  return (
+    <>
+      <div className="bg-red-300 w-full h-full">
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+        <h2>ssss</h2>
+      </div>
+    </>
+  );
 }
