@@ -1,6 +1,6 @@
 "use client";
 
-import { getProduct } from "@/app/services/api";
+import { getProduct, getProductNames } from "@/app/services/api";
 import React, { JSX, useEffect, useState } from "react";
 
 interface Product {
@@ -261,8 +261,13 @@ const getIcon = (iconName: string): JSX.Element => {
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedName, setSelectedName] = useState("");
+  const [productNames, setProductNames] = useState<string[]>([]);
 
+  // Fetch all products on mount
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -270,6 +275,7 @@ export default function ProductsPage() {
         if (res && Array.isArray(res.data)) {
           const transformedProducts = transformApiProducts(res.data);
           setProducts(transformedProducts);
+          setFilteredProducts(transformedProducts);
         }
       } catch (err) {
         console.error("Lỗi khi tải sản phẩm:", err);
@@ -280,12 +286,91 @@ export default function ProductsPage() {
     fetchProducts();
   }, []);
 
-  const totalProducts = products.length;
-  const activeProducts = products.filter((p) => p.status === "active").length;
-  const outOfStockProducts = products.filter(
+  // Fetch product names for filter dropdown
+  useEffect(() => {
+    const fetchProductNames = async () => {
+      try {
+        const res = await getProductNames();
+        if (res && Array.isArray(res.data)) {
+          setProductNames(res.data);
+        }
+      } catch (err) {
+        console.error("Lỗi khi tải danh sách tên sản phẩm:", err);
+      }
+    };
+    fetchProductNames();
+  }, []);
+
+  // Handle search by text input
+  useEffect(() => {
+    if (!searchTerm || searchTerm.trim() === "") {
+      // If no search term, apply filter by name only
+      if (selectedName && selectedName !== "") {
+        const filtered = products.filter(
+          (product) => product.name === selectedName
+        );
+        setFilteredProducts(filtered);
+      } else {
+        setFilteredProducts(products);
+      }
+    } else {
+      // If searching, clear name filter and search in all products
+      const filtered = products.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+    }
+  }, [searchTerm, selectedName, products]);
+
+  // Handle filter by product name from API
+  const handleNameFilterChange = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const name = e.target.value;
+    setSelectedName(name);
+    setSearchTerm(""); // Clear search when filtering
+
+    if (name === "") {
+      // Show all products
+      setLoading(true);
+      try {
+        const res = await getProduct({ deleted: false, name: null });
+        if (res && Array.isArray(res.data)) {
+          const transformedProducts = transformApiProducts(res.data);
+          setProducts(transformedProducts);
+          setFilteredProducts(transformedProducts);
+        }
+      } catch (err) {
+        console.error("Lỗi khi tải sản phẩm:", err);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Filter by specific product name via API
+      setLoading(true);
+      try {
+        const res = await getProduct({ deleted: false, name: name });
+        if (res && Array.isArray(res.data)) {
+          const transformedProducts = transformApiProducts(res.data);
+          setProducts(transformedProducts);
+          setFilteredProducts(transformedProducts);
+        }
+      } catch (err) {
+        console.error("Lỗi khi lọc sản phẩm:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const totalProducts = filteredProducts.length;
+  const activeProducts = filteredProducts.filter(
+    (p) => p.status === "active"
+  ).length;
+  const outOfStockProducts = filteredProducts.filter(
     (p) => p.status === "out_of_stock"
   ).length;
-  const totalValue = products.reduce((sum, p) => {
+  const totalValue = filteredProducts.reduce((sum, p) => {
     const price = parseFloat(p.sellPrice.replace(/[^\d]/g, ""));
     return sum + price * p.stock;
   }, 0);
@@ -360,33 +445,69 @@ export default function ProductsPage() {
         ))}
       </div>
 
+      {/* Search & Filter Bar */}
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
+          {/* Search Input */}
           <div className="flex-1 relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               {getIcon("search")}
             </div>
             <input
               type="text"
-              placeholder="Tìm kiếm sản phẩm..."
+              placeholder="Tìm kiếm sản phẩm theo tên..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            )}
           </div>
 
+          {/* Category Filter */}
           <div className="relative">
-            <select className="appearance-none pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer bg-white">
-              <option>Tất cả danh mục</option>
-              <option>iPhone 15 Series</option>
-              <option>iPhone 14 Series</option>
-              <option>iPhone 13 Series</option>
-              <option>Phụ kiện</option>
+            <select
+              value={selectedName}
+              onChange={handleNameFilterChange}
+              disabled={searchTerm !== ""}
+              className="appearance-none pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+            >
+              <option value="">Tất cả sản phẩm</option>
+              {productNames.map((name, index) => (
+                <option key={index} value={name}>
+                  {name}
+                </option>
+              ))}
             </select>
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               {getIcon("filter")}
             </div>
           </div>
+
+          {/* Status Filter - Disabled for now */}
           <div className="relative">
-            <select className="appearance-none pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer bg-white">
+            <select
+              disabled
+              className="appearance-none pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-not-allowed bg-gray-100"
+            >
               <option>Tất cả trạng thái</option>
               <option>Đang bán</option>
               <option>Hết hàng</option>
@@ -394,8 +515,71 @@ export default function ProductsPage() {
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               {getIcon("filter")}
             </div>
+            <span className="absolute -top-2 -right-2 bg-yellow-400 text-xs px-2 py-0.5 rounded-full text-gray-800 font-semibold">
+              Soon
+            </span>
           </div>
         </div>
+
+        {/* Active Filters Display */}
+        {(searchTerm || selectedName) && (
+          <div className="mt-4 flex items-center gap-2 flex-wrap">
+            <span className="text-sm text-gray-600 font-medium">
+              Đang lọc:
+            </span>
+            {searchTerm && (
+              <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                Tìm kiếm: &quot;{searchTerm}&quot;
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className="hover:bg-blue-200 rounded-full p-0.5"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </span>
+            )}
+            {selectedName && (
+              <span className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
+                Sản phẩm: {selectedName}
+                <button
+                  onClick={() => {
+                    const fakeEvent = {
+                      target: { value: "" },
+                    } as React.ChangeEvent<HTMLSelectElement>;
+                    handleNameFilterChange(fakeEvent);
+                  }}
+                  className="hover:bg-purple-200 rounded-full p-0.5"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
@@ -451,7 +635,7 @@ export default function ProductsPage() {
                   </td>
                 </tr>
               ) : (
-                products.map((product) => (
+                filteredProducts.map((product) => (
                   <tr
                     key={product.id}
                     className="border-b hover:bg-gray-50 transition"
@@ -527,7 +711,13 @@ export default function ProductsPage() {
       </div>
       <div className="bg-white rounded-lg shadow-sm p-4">
         <p className="text-center text-sm text-gray-600">
-          Hiển thị {products.length} / {products.length} sản phẩm
+          Hiển thị {filteredProducts.length} sản phẩm
+          {(searchTerm || selectedName) && (
+            <span className="text-gray-400">
+              {" "}
+              (lọc từ {products.length} sản phẩm)
+            </span>
+          )}
         </p>
       </div>
     </div>
