@@ -22,3 +22,8 @@ export const logout = () => {
     sessionStorage.clear();
     window.location.href = "/user/login";
 };
+
+export const logoutAdmin = () => {
+    sessionStorage.clear();
+    window.location.href = "/admin/login";
+};

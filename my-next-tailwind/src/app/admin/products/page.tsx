@@ -1,8 +1,8 @@
 "use client";
 
-import React, { JSX } from "react";
+import { getProduct } from "@/app/services/api";
+import React, { JSX, useEffect, useState } from "react";
 
-// TypeScript Interfaces
 interface Product {
   id: number;
   name: string;
@@ -15,6 +15,29 @@ interface Product {
   status: "active" | "out_of_stock";
 }
 
+interface ApiProduct {
+  id: number;
+  ma: string;
+  tenSanPham: string;
+  deleted: boolean;
+  tenNhaSanXuat: string;
+  chiTietSanPhams: ChiTietSanPham[];
+}
+
+interface ChiTietSanPham {
+  id: number;
+  soLuong: number | null;
+  ma: string;
+  giaBan: number;
+  ghiChu: string;
+  deleted: boolean;
+  tenMauSac: string;
+  dungLuongRam: string;
+  dungLuongBoNhoTrong: string;
+  imeis: string[];
+  anhUrls: string[];
+}
+
 interface StatCard {
   label: string;
   value: number | string;
@@ -23,118 +46,35 @@ interface StatCard {
   icon: string;
 }
 
-const productsData: Product[] = [
-  {
-    id: 1,
-    name: "iPhone 15 Pro Max",
-    color: "Titan Tự Nhiên",
-    model: "A2849",
-    storage: "256GB",
-    costPrice: "26,000,000 đ",
-    sellPrice: "29,990,000 đ",
-    stock: 8,
-    status: "active",
-  },
-  {
-    id: 2,
-    name: "iPhone 15 Pro",
-    color: "Titan Xanh",
-    model: "A2848",
-    storage: "128GB",
-    costPrice: "22,500,000 đ",
-    sellPrice: "25,990,000 đ",
-    stock: 12,
-    status: "active",
-  },
-  {
-    id: 3,
-    name: "iPhone 15 Plus",
-    color: "Đen",
-    model: "A2847",
-    storage: "256GB",
-    costPrice: "20,000,000 đ",
-    sellPrice: "22,990,000 đ",
-    stock: 15,
-    status: "active",
-  },
-  {
-    id: 4,
-    name: "iPhone 15",
-    color: "Hồng",
-    model: "A2846",
-    storage: "128GB",
-    costPrice: "17,500,000 đ",
-    sellPrice: "19,990,000 đ",
-    stock: 20,
-    status: "active",
-  },
-  {
-    id: 5,
-    name: "iPhone 14 Pro Max",
-    color: "Tím",
-    model: "A2651",
-    storage: "512GB",
-    costPrice: "24,000,000 đ",
-    sellPrice: "27,990,000 đ",
-    stock: 6,
-    status: "active",
-  },
-  {
-    id: 6,
-    name: "iPhone 14",
-    color: "Xanh",
-    model: "A2649",
-    storage: "256GB",
-    costPrice: "15,500,000 đ",
-    sellPrice: "17,990,000 đ",
-    stock: 10,
-    status: "active",
-  },
-  {
-    id: 7,
-    name: "iPhone 13 Pro",
-    color: "Xanh Sierra",
-    model: "A2483",
-    storage: "128GB",
-    costPrice: "19,000,000 đ",
-    sellPrice: "21,990,000 đ",
-    stock: 0,
-    status: "out_of_stock",
-  },
-];
+const formatPrice = (price: number): string => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(price);
+};
 
-const statsData: StatCard[] = [
-  {
-    label: "Tổng sản phẩm",
-    value: 7,
-    bgColor: "bg-blue-50",
-    iconBg: "bg-blue-500",
-    icon: "box",
-  },
-  {
-    label: "Đang kinh doanh",
-    value: 6,
-    bgColor: "bg-green-50",
-    iconBg: "bg-green-500",
-    icon: "check",
-  },
-  {
-    label: "Hết hàng",
-    value: 1,
-    bgColor: "bg-red-50",
-    iconBg: "bg-red-500",
-    icon: "x",
-  },
-  {
-    label: "Giá trị kho",
-    value: "1,644,290,000 đ",
-    bgColor: "bg-purple-50",
-    iconBg: "bg-purple-500",
-    icon: "dollar",
-  },
-];
+const transformApiProducts = (apiProducts: ApiProduct[]): Product[] => {
+  const products: Product[] = [];
 
-// Icon Components
+  apiProducts.forEach((apiProduct) => {
+    apiProduct.chiTietSanPhams.forEach((chiTiet) => {
+      const stock = chiTiet.imeis?.length || 0;
+      products.push({
+        id: chiTiet.id,
+        name: apiProduct.tenSanPham,
+        color: chiTiet.tenMauSac,
+        model: apiProduct.ma,
+        storage: chiTiet.dungLuongBoNhoTrong,
+        costPrice: "-",
+        sellPrice: formatPrice(chiTiet.giaBan),
+        stock: stock,
+        status: stock > 0 ? "active" : "out_of_stock",
+      });
+    });
+  });
+
+  return products;
+};
 const getIcon = (iconName: string): JSX.Element => {
   const icons: Record<string, JSX.Element> = {
     box: (
@@ -265,7 +205,13 @@ const getIcon = (iconName: string): JSX.Element => {
         viewBox="0 0 24 24"
       >
         <defs>
-          <linearGradient id="phoneGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient
+            id="phoneGradient"
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+          >
             <stop offset="0%" stopColor="#3B82F6" />
             <stop offset="100%" stopColor="#8B5CF6" />
           </linearGradient>
@@ -314,9 +260,68 @@ const getIcon = (iconName: string): JSX.Element => {
 };
 
 export default function ProductsPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await getProduct({ deleted: false, name: null });
+        if (res && Array.isArray(res.data)) {
+          const transformedProducts = transformApiProducts(res.data);
+          setProducts(transformedProducts);
+        }
+      } catch (err) {
+        console.error("Lỗi khi tải sản phẩm:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  const totalProducts = products.length;
+  const activeProducts = products.filter((p) => p.status === "active").length;
+  const outOfStockProducts = products.filter(
+    (p) => p.status === "out_of_stock"
+  ).length;
+  const totalValue = products.reduce((sum, p) => {
+    const price = parseFloat(p.sellPrice.replace(/[^\d]/g, ""));
+    return sum + price * p.stock;
+  }, 0);
+
+  const statsData: StatCard[] = [
+    {
+      label: "Tổng sản phẩm",
+      value: totalProducts,
+      bgColor: "bg-blue-50",
+      iconBg: "bg-blue-500",
+      icon: "box",
+    },
+    {
+      label: "Đang kinh doanh",
+      value: activeProducts,
+      bgColor: "bg-green-50",
+      iconBg: "bg-green-500",
+      icon: "check",
+    },
+    {
+      label: "Hết hàng",
+      value: outOfStockProducts,
+      bgColor: "bg-red-50",
+      iconBg: "bg-red-500",
+      icon: "x",
+    },
+    {
+      label: "Giá trị kho",
+      value: formatPrice(totalValue),
+      bgColor: "bg-purple-50",
+      iconBg: "bg-purple-500",
+      icon: "dollar",
+    },
+  ];
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           <div className="bg-purple-100 p-3 rounded-lg text-purple-600">
@@ -355,10 +360,8 @@ export default function ProductsPage() {
         ))}
       </div>
 
-      {/* Search & Filter Bar */}
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
-          {/* Search Input */}
           <div className="flex-1 relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               {getIcon("search")}
@@ -370,7 +373,6 @@ export default function ProductsPage() {
             />
           </div>
 
-          {/* Category Filter */}
           <div className="relative">
             <select className="appearance-none pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer bg-white">
               <option>Tất cả danh mục</option>
@@ -383,8 +385,6 @@ export default function ProductsPage() {
               {getIcon("filter")}
             </div>
           </div>
-
-          {/* Status Filter */}
           <div className="relative">
             <select className="appearance-none pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer bg-white">
               <option>Tất cả trạng thái</option>
@@ -398,7 +398,6 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      {/* Products Table */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -431,90 +430,104 @@ export default function ProductsPage() {
               </tr>
             </thead>
             <tbody>
-              {productsData.map((product) => (
-                <tr
-                  key={product.id}
-                  className="border-b hover:bg-gray-50 transition"
-                >
-                  {/* Product Info */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-shrink-0">{getIcon("phone")}</div>
-                      <div>
-                        <p className="font-semibold text-gray-800">
-                          {product.name}
-                        </p>
-                        <p className="text-sm text-gray-500">{product.color}</p>
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* Model */}
-                  <td className="px-6 py-4">
-                    <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm font-medium">
-                      {product.model}
-                    </span>
-                  </td>
-
-                  {/* Storage */}
-                  <td className="px-6 py-4">
-                    <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm font-medium">
-                      {product.storage}
-                    </span>
-                  </td>
-
-                  {/* Cost Price */}
-                  <td className="px-6 py-4 text-right text-gray-800 font-medium">
-                    {product.costPrice}
-                  </td>
-
-                  {/* Sell Price */}
-                  <td className="px-6 py-4 text-right text-gray-800 font-medium">
-                    {product.sellPrice}
-                  </td>
-
-                  {/* Stock */}
-                  <td className="px-6 py-4">
-                    <div className="flex justify-center">
-                      <span className="bg-gray-900 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-medium">
-                        {product.stock}
+              {loading ? (
+                <tr>
+                  <td colSpan={8} className="px-6 py-8 text-center">
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      <span className="text-gray-600">
+                        Đang tải sản phẩm...
                       </span>
                     </div>
                   </td>
-
-                  {/* Status */}
-                  <td className="px-6 py-4">
-                    <div className="flex justify-center">
-                      {product.status === "active" ? (
-                        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
-                          Đang bán
-                        </span>
-                      ) : (
-                        <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium">
-                          Hết hàng
-                        </span>
-                      )}
-                    </div>
-                  </td>
-
-                  {/* Actions */}
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-center gap-3">
-                      {getIcon("edit")}
-                      {getIcon("delete")}
-                    </div>
+                </tr>
+              ) : products.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={8}
+                    className="px-6 py-8 text-center text-gray-500"
+                  >
+                    Không có sản phẩm nào
                   </td>
                 </tr>
-              ))}
+              ) : (
+                products.map((product) => (
+                  <tr
+                    key={product.id}
+                    className="border-b hover:bg-gray-50 transition"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex-shrink-0">{getIcon("phone")}</div>
+                        <div>
+                          <p className="font-semibold text-gray-800">
+                            {product.name}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {product.color}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm font-medium">
+                        {product.model}
+                      </span>
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm font-medium">
+                        {product.storage}
+                      </span>
+                    </td>
+
+                    <td className="px-6 py-4 text-right text-gray-800 font-medium">
+                      {product.costPrice}
+                    </td>
+
+                    <td className="px-6 py-4 text-right text-gray-800 font-medium">
+                      {product.sellPrice}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <div className="flex justify-center">
+                        <span className="bg-gray-900 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-medium">
+                          {product.stock}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <div className="flex justify-center">
+                        {product.status === "active" ? (
+                          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
+                            Đang bán
+                          </span>
+                        ) : (
+                          <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium">
+                            Hết hàng
+                          </span>
+                        )}
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <div className="flex items-center justify-center gap-3">
+                        {getIcon("edit")}
+                        {getIcon("delete")}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
-
-      {/* Pagination */}
       <div className="bg-white rounded-lg shadow-sm p-4">
         <p className="text-center text-sm text-gray-600">
-          Hiển thị {productsData.length} / {productsData.length} sản phẩm
+          Hiển thị {products.length} / {products.length} sản phẩm
         </p>
       </div>
     </div>
