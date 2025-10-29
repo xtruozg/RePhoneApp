@@ -17,9 +17,7 @@ export default function HeaderAdmin() {
   }, []);
 
   const handleLogout = () => {
-    if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
-      logoutAdmin();
-    }
+    logoutAdmin();
   };
 
   return (

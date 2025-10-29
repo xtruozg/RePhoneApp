@@ -16,10 +16,8 @@ export default function AdminLayout({
   return (
     <AdminAuthGuard>
       {isLoginPage ? (
-        // Login page without layout
         <>{children}</>
       ) : (
-        // Dashboard pages with layout
         <div className="flex min-h-screen justify-between">
           <div className="w-[10%] border-r border-gray-300">
             <Navbar />
